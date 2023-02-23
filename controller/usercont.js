@@ -3,9 +3,12 @@ const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 
 const home=(req,res)=>{
+     console.log(req.user);
+     
     res.render('home',{
-        data:userModel.find()
+        data:req.user
     })
+      
 }
 
 const dashboard=(req,res)=>{
@@ -23,6 +26,11 @@ const dashboard=(req,res)=>{
     })
 }
 }
+const product=(req,res)=>{
+    res.render('product',{
+        data:req.user
+    })
+}
 
 
 
@@ -30,7 +38,7 @@ const register=(req,res)=>{
     res.render('register',{
         message:req.flash('message'),
         message1:req.flash('message1'),
-        data:userModel.find(),
+        data:req.user
         
     })
     console.log(data);
@@ -58,7 +66,7 @@ userModel.findOne({
         const token=jwt.sign({
             id:data._id,
             name:data.name
-        },"Arka@12345678",{expiresIn:"5s"})
+        },"Arka@12345678",{expiresIn:"5h"})
         res.cookie('userToken',token)
         if(req.body.rememberme){
             res.cookie('email',req.body.email)
@@ -95,13 +103,16 @@ if(req.user){
         loginData.password = (req.cookies.password) ? req.cookies.password : undefined
         res.render('login',{
             message: req.flash('message'),
+            message2: req.flash('message2'),
            
-            data:loginData
+            data1:loginData,
+            data:req.user
         })
     }
     
 const logout=(req,res)=>{
     res.clearCookie("userToken")
+    
     res.redirect('/login')
 }
 module.exports={
@@ -112,5 +123,6 @@ module.exports={
     dashboard,
     authenticate,
     logout,
-    home
+    home,
+    product
 }
